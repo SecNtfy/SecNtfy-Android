@@ -20,3 +20,41 @@
 <a href="https://github.com/SecNtfy/SecNtfy-Android/commits?author=SecNtfy" target="blank">
     <img src="https://img.shields.io/github/last-commit/SecNtfy/SecNtfy-Android" alt="SecNtfy Android Library Issues"/>
 </a>
+
+## SecNtfy Android Library
+An android library used to receive encrypted messages...
+
+### 1. Adding SecNtfy to your project
+
+* Include jitpack in your root `settings.gradle.kts` file.
+
+```gradle
+pluginManagement {
+    repositories {
+        ...
+        maven {
+            url = uri("https://jitpack.io")
+        }
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        ...
+        maven {
+            url = uri("https://jitpack.io")
+        }
+    }
+}
+```
+
+* And add it's dependency to your app level `build.gradle.kts` file:
+
+```gradle
+dependencies {    
+    implementation(libs.secNtfy.android)
+}
+```
+
+#### Sync your project, and :scream: boom :fire: you have added SecNtfy successfully. :exclamation:

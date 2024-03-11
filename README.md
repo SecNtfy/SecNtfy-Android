@@ -53,7 +53,7 @@ dependencyResolutionManagement {
 
 ```gradle
 dependencies {    
-    implementation(libs.secNtfy.android)
+    implementation(libs.secNtfy.android) // or implementation 'com.github.SecNtfy:SecNtfy-Android:0.0.1'
 }
 ```
 

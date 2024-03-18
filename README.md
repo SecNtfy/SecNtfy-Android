@@ -22,7 +22,7 @@
 </a>
 
 ## SecNtfy Android Library
-An android library used to receive encrypted messages...
+An android library used to receive encrypted messages, over the service SecNtfy
 
 ### 1. Adding SecNtfy to your project
 

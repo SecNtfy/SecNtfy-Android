@@ -6,11 +6,11 @@ plugins {
 
 android {
     namespace = "com.secntfy.androidtest"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.secntfy.androidtest"
-        minSdk = 28
+        minSdk = 30
         targetSdk = 34
         versionCode = 1
         versionName = "1.0.1"

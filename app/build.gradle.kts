@@ -12,7 +12,7 @@ android {
         minSdk = 28
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.1"
 
         vectorDrawables {
             useSupportLibrary = true
@@ -59,5 +59,6 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(project(":secntfy"))
+//    implementation(libs.secNtfy.android)
     debugImplementation(libs.androidx.ui.tooling)
 }

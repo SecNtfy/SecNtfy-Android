@@ -123,7 +123,7 @@ class SecNtfy private constructor() {
             ntfyDevice?.D_NTFY_Token = ntfyToken!!
 
             if ((_deviceToken.isEmpty() || _deviceToken != ntfyToken)) {
-                _deviceToken = ntfyToken
+                _deviceToken = ntfyToken ?: ""
                 with(_sharedPref!!.edit()) {
                     putString("NTFY_DEVICE_TOKEN", _deviceToken)
                     apply()
@@ -168,6 +168,9 @@ class SecNtfy private constructor() {
             } catch (e: NtfyException) {
                 println("🔥 - Failed to PostDevice ${e.localizedMessage}")
                 callback(null, e)
+            } catch (e: Exception) {
+                println("💥 - Unexpected error: ${e.localizedMessage}")
+                callback(null, NtfyException.UnknownError())
             }
         }
     }

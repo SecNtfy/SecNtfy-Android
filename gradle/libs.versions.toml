@@ -1,27 +1,28 @@
 [versions]
-agp = "8.3.0"
+agp = "8.11.0"
 androidMavenGradlePlugin = "2.1"
 gradle = "7.0.4"
 jitpackLibraryKotlinDslGuide = "1.0.1"
-kotlin = "1.9.0"
-coreKtx = "1.12.0"
+kotlin = "2.2.0"
+coreKtx = "1.16.0"
 junit = "4.13.2"
-junitVersion = "1.1.5"
-espressoCore = "3.5.1"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
 kotlinGradlePlugin = "2.1"
-lifecycleRuntimeKtx = "2.7.0"
-activityCompose = "1.8.2"
-composeBom = "2024.02.01"
-appcompat = "1.6.1"
-material = "1.11.0"
-ktorClientCore = "3.0.0-beta-1"
-ktorClientAndroid = "3.0.0-beta-1"
-ktorClientSerialization = "3.0.0-beta-1"
-ktorClientLogging = "3.0.0-beta-1"
-kotlinxSerializationJson = "1.6.3"
-ktorClientContentNegotiation = "3.0.0-beta-1"
-ktorSerializationKotlinxJson = "3.0.0-beta-1"
-gson = "2.10.1"
+lifecycleRuntimeKtx = "2.9.1"
+activityCompose = "1.10.1"
+composeBom = "2025.06.01"
+appcompat = "1.7.1"
+material = "1.12.0"
+ktorClientCore = "3.2.0"
+ktorClientAndroid = "3.2.0"
+ktorClientSerialization = "3.2.0"
+ktorClientLogging = "3.2.0"
+kotlinxSerializationJson = "1.9.0"
+ktorClientContentNegotiation = "3.2.0"
+ktorSerializationKotlinxJson = "3.2.0"
+gson = "2.13.1"
+secntfyAndroid = "1.0.0"
 
 [libraries]
 android-maven-gradle-plugin = { module = "com.github.dcendents:android-maven-gradle-plugin", version.ref = "androidMavenGradlePlugin" }
@@ -52,6 +53,7 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktorClientContentNegotiation" }
 ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktorSerializationKotlinxJson" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+secNtfy-android = { module = "com.github.SecNtfy:SecNtfy-Android", version.ref = "secntfyAndroid" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

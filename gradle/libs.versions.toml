@@ -22,7 +22,7 @@ kotlinxSerializationJson = "1.9.0"
 ktorClientContentNegotiation = "3.2.0"
 ktorSerializationKotlinxJson = "3.2.0"
 gson = "2.13.1"
-secntfyAndroid = "1.1.1"
+secntfyAndroid = "1.1.2"
 
 [libraries]
 android-maven-gradle-plugin = { module = "com.github.dcendents:android-maven-gradle-plugin", version.ref = "androidMavenGradlePlugin" }

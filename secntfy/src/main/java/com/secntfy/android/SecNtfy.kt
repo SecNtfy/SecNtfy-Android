@@ -242,6 +242,8 @@ class SecNtfy private constructor() {
                 println("♻️ - ${result.Message} ${result.Token}")
             } catch (e: NtfyException) {
                 println("🔥 - Failed to PostDevice ${e.localizedMessage}")
+            } catch (e: Exception) {
+                println("💥 - Unexpected error: ${e.localizedMessage}")
             }
         }
     }

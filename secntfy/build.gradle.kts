@@ -60,7 +60,7 @@ publishing{
         create<MavenPublication>("release") {
             group = "com.github.secntfy-android"
             artifactId = "secntfy"
-            version = "1.1.0"
+            version = "1.1.2"
             afterEvaluate {
                 from(components["release"])
             }

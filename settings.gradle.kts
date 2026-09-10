@@ -7,9 +7,6 @@ pluginManagement {
                 includeGroupByRegex("androidx.*")
             }
         }
-        maven {
-            url = uri("https://jitpack.io")
-        }
         mavenCentral()
         gradlePluginPortal()
     }
@@ -18,13 +15,10 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
-        maven {
-            url = uri("https://jitpack.io")
-        }
         mavenCentral()
     }
 }
 
-rootProject.name = "SecNtfyAndroidTest"
+rootProject.name = "SecNtfy-Android"
 include(":app")
 include(":secntfy")

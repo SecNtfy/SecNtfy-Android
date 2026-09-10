@@ -1,9 +1,17 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.kotlinPluginSerialization)
     `maven-publish`
 }
+
+group = "com.github.SecNtfy"
+version = providers.gradleProperty("releaseVersion")
+    .orElse(providers.environmentVariable("VERSION"))
+    .orElse("0.0.0-SNAPSHOT")
+    .get()
 
 android {
     namespace = "com.secntfy.android"
@@ -27,40 +35,56 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
     publishing {
-        publishing {
-            singleVariant("release") {
-                withSourcesJar()
-                withJavadocJar()
-            }
+        singleVariant("release") {
+            withSourcesJar()
         }
     }
 }
 
-dependencies {
-
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.android)
-    implementation(libs.ktor.client.serialization)
-    implementation(libs.ktor.client.logging)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.ktor.serialization.kotlinx.json)
-    implementation(libs.gson)
+kotlin {
+    jvmToolchain(17)
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_1_8)
+    }
 }
 
-publishing{
+dependencies {
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.android)
+    implementation(libs.kotlinx.serialization.json)
+    testImplementation(libs.junit)
+    testImplementation(libs.ktor.client.mock)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+}
+
+publishing {
     publications {
-        create<MavenPublication>("release") {
-            group = "com.github.secntfy-android"
-            artifactId = "secntfy"
-            version = "1.1.2"
+        register<MavenPublication>("release") {
+            groupId = project.group.toString()
+            artifactId = "SecNtfy-Android"
+            version = project.version.toString()
+
+            pom {
+                name.set("SecNtfy Android")
+                description.set("Android client for the SecNtfy encrypted notification service.")
+                url.set("https://github.com/SecNtfy/SecNtfy-Android")
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://opensource.org/licenses/MIT")
+                        distribution.set("repo")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:https://github.com/SecNtfy/SecNtfy-Android.git")
+                    developerConnection.set("scm:git:ssh://git@github.com/SecNtfy/SecNtfy-Android.git")
+                    url.set("https://github.com/SecNtfy/SecNtfy-Android")
+                }
+            }
+
+            // AGP creates the release component after project evaluation.
             afterEvaluate {
                 from(components["release"])
             }

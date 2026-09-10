@@ -47,6 +47,12 @@ data class Response (
 )
 
 sealed class NtfyException(message: String) : Exception(message) {
+    class InvalidMessageId : NtfyException("Message ID must be a non-empty path segment")
+    class NotInitialized : NtfyException("Initialize SecNtfy before using it")
+    class ConfigurationChanged : NtfyException("SecNtfy configuration changed during registration; register again")
+    class DecryptionFailed : NtfyException("Message could not be decrypted")
+    class HttpError(val statusCode: Int) : NtfyException("SecNtfy HTTP request failed ($statusCode)")
+    class ApiError(val statusCode: Int) : NtfyException("SecNtfy API rejected the request ($statusCode)")
     class UnknownError : NtfyException("Unknown error occurred")
     class ConnectionError : NtfyException("Connection error occurred")
     class InvalidCredentials : NtfyException("Invalid credentials error occurred")
@@ -60,4 +66,12 @@ sealed class NtfyException(message: String) : Exception(message) {
     class NoDevice : NtfyException("No device error occurred")
     class NoActivity : NtfyException("No activity error occurred")
     class NoBundleIdOrApiUrl: NtfyException("🔥 - The API URL or Bundle Group is empty")
+}
+
+/** Server acknowledgement of receipt; this does not mean the user has read the notification. */
+enum class DeliveryReceipt {
+    /** The server accepted this receipt for the first time (API Status 200). */
+    DELIVERED,
+    /** The server had already accepted a receipt for this message (API Status 201). */
+    ALREADY_DELIVERED,
 }

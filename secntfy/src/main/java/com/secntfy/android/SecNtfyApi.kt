@@ -60,6 +60,15 @@ internal class SecNtfyApi(client: HttpClient? = null) {
         }
     }
 
+    suspend fun updateDevice(apiUrl: String, deviceToken: String, device: NTFY_Devices) {
+        if (deviceToken.isBlank()) throw NtfyException.NoDevice()
+        val response = post(apiUrl, listOf("Device", "Update"),
+            "X-NTFYME-DEVICE-KEY", deviceToken, json.encodeToString(device))
+        if (response.Status !in 200..299 && response.Message != "Device wurde aktualisiert!") {
+            throw NtfyException.ApiError(response.Status)
+        }
+    }
+
     private suspend fun post(
         apiUrl: String,
         path: List<String>,
@@ -125,4 +134,4 @@ internal class SecNtfyApi(client: HttpClient? = null) {
 }
 
 @Serializable
-private data class ApiResponse(val Status: Int, val Token: String? = null)
+private data class ApiResponse(val Status: Int, val Token: String? = null, val Message: String? = null)

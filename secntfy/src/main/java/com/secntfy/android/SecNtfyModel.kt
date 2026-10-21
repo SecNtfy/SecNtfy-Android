@@ -5,39 +5,45 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class NTFY_Devices (
 
-    var D_ID: Int,
+    var D_ID: Int? = null,
     /// <summary>
     /// APP ID
     /// </summary>
-    var D_APP_ID: Int,
+    var D_APP_ID: Int? = null,
     /// <summary>
     /// Device OS
     /// </summary>
-    var D_OS: Int,
+    var D_OS: Int? = null,
     /// <summary>
     /// Device OS Version
     /// </summary>
-    var D_OS_Version: String,
+    var D_OS_Version: String? = null,
     /// <summary>
     /// Device Model
     /// </summary>
-    var D_Model: String,
+    var D_Model: String? = null,
+    /// Whether the client runs in a simulator.
+    var D_IsSimulator: Boolean? = null,
+    /// Whether the client is a debug build.
+    var D_IsDebug: Boolean? = null,
+    /// Version of the app registering this device.
+    var D_AppVersion: String? = null,
     /// <summary>
     /// Device APN ID
     /// </summary>
-    var D_APN_ID: String,
+    var D_APN_ID: String? = null,
     /// <summary>
     /// Device Android ID
     /// </summary>
-    var D_Android_ID: String,
+    var D_Android_ID: String? = null,
     /// <summary>
     /// Public Key from Device
     /// </summary>
-    var D_PublicKey: String,
+    var D_PublicKey: String? = null,
     /// <summary>
     /// NTFY-DeviceToken
     /// </summary>
-    var D_NTFY_Token: String
+    var D_NTFY_Token: String? = null
 )
 
 data class Response (

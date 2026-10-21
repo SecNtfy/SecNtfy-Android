@@ -54,6 +54,8 @@ class SecNtfy internal constructor(
                 publicKey = publicKey,
                 deviceToken = deviceToken,
                 preferences = preferences,
+                bundleGroup = bundleGroup,
+                context = ctx.applicationContext,
             )
         }
     }
@@ -62,15 +64,100 @@ class SecNtfy internal constructor(
         if (apiKey.isBlank()) throw NtfyException.InvalidCredentials()
         synchronized(stateLock) {
             if (state.apiUrl.isBlank()) throw NtfyException.NotInitialized()
+
+            val ctx = state.context
+            val isSimulator = Build.FINGERPRINT.startsWith("generic") ||
+                    Build.FINGERPRINT.startsWith("unknown") ||
+                    Build.MODEL.contains("google_sdk") ||
+                    Build.MODEL.contains("Emulator") ||
+                    Build.MODEL.contains("Android SDK built for x86") ||
+                    Build.HARDWARE.contains("goldfish") ||
+                    Build.HARDWARE.contains("ranchu") ||
+                    Build.PRODUCT.contains("sdk") ||
+                    Build.PRODUCT.contains("google_sdk") ||
+                    Build.PRODUCT.contains("sdk_x86") ||
+                    Build.PRODUCT.contains("vbox86p")
+
+            val isDebug = ctx?.let {
+                (it.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
+            } ?: false
+
+            val appVersion = ctx?.let { c ->
+                try {
+                    val pInfo = c.packageManager.getPackageInfo(c.packageName, 0)
+                    val vName = pInfo.versionName
+                    val vCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        pInfo.longVersionCode
+                    } else {
+                        @Suppress("DEPRECATION")
+                        pInfo.versionCode.toLong()
+                    }
+                    if (!vName.isNullOrBlank()) "$vName ($vCode)" else vCode.toString()
+                } catch (_: Exception) {
+                    null
+                }
+            }
+
             state = state.copy(
                 apiKey = apiKey,
                 device = NTFY_Devices(
-                    0, 0, 0, "SDK: ${Build.VERSION.SDK_INT}", Build.PRODUCT,
-                    "", state.device?.D_Android_ID.orEmpty(), state.publicKey, state.deviceToken,
+                    D_ID = 0,
+                    D_APP_ID = 0,
+                    D_OS = 0,
+                    D_OS_Version = "SDK: ${Build.VERSION.SDK_INT}",
+                    D_Model = Build.PRODUCT,
+                    D_IsSimulator = isSimulator,
+                    D_IsDebug = isDebug,
+                    D_AppVersion = appVersion,
+                    D_APN_ID = "",
+                    D_Android_ID = state.device?.D_Android_ID.orEmpty(),
+                    D_PublicKey = state.publicKey,
+                    D_NTFY_Token = state.deviceToken,
                 ),
             )
         }
     }
+
+    /** Creates a fresh key pair and publishes its public key to the registered device. */
+    suspend fun updateKeys(): Boolean {
+        val snapshot = synchronized(stateLock) { state }
+        val deviceToUpdate = snapshot.device ?: return false
+        if (snapshot.bundleGroup.isBlank() || snapshot.deviceToken.isBlank() || deviceToUpdate.D_OS_Version.isNullOrBlank()) {
+            return false
+        }
+        return try {
+            val keyPair = KeyPairGenerator.getInstance("RSA").apply { initialize(2048) }.generateKeyPair()
+            val privateKey = Base64.getEncoder().encodeToString(keyPair.private.encoded)
+            val publicKey = Base64.getEncoder().encodeToString(keyPair.public.encoded)
+            val device = deviceToUpdate.copy(
+                D_PublicKey = publicKey,
+                D_NTFY_Token = snapshot.deviceToken
+            )
+            api.updateDevice(snapshot.apiUrl, snapshot.deviceToken, device)
+
+            snapshot.preferences?.edit()
+                ?.putString("NTFY_PUB_KEY", publicKey)
+                ?.putString("NTFY_PRIV_KEY", privateKey)
+                ?.apply()
+
+            synchronized(stateLock) {
+                if (state.revision == snapshot.revision) {
+                    state = state.copy(
+                        publicKey = publicKey,
+                        privateKey = privateKey,
+                        device = device,
+                        revision = state.revision + 1
+                    )
+                }
+            }
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    @Deprecated("Use updateKeys")
+    suspend fun UpdateKeys(): Boolean = updateKeys()
 
     /** Registers or updates this device, returning a non-empty token or throwing NtfyException. */
     suspend fun registerDevice(): String = registrationMutex.withLock {
@@ -166,4 +253,7 @@ internal data class SecNtfyState(
     val deviceToken: String = "",
     val device: NTFY_Devices? = null,
     val preferences: SharedPreferences? = null,
+    val bundleGroup: String = "",
+    val revision: Int = 0,
+    val context: Context? = null,
 )

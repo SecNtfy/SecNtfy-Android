@@ -236,11 +236,47 @@ class SecNtfyTest {
         }
     }
 
+    @Test
+    fun `device metadata remains optional for legacy payloads`() {
+        val json = """{"D_Model":"Android Device"}"""
+        val device = Json.decodeFromString<NTFY_Devices>(json)
+        assertNull(device.D_IsSimulator)
+        assertNull(device.D_IsDebug)
+        assertNull(device.D_AppVersion)
+    }
+
+    @Test
+    fun `updateKeys updates public and private keys on success`() = runBlocking {
+        var updateCalled = false
+        withClient(MockEngine { request ->
+            assertEquals("/api/Device/Update", request.url.encodedPath)
+            assertEquals("device-secret", request.headers["X-NTFYME-DEVICE-KEY"])
+            updateCalled = true
+            respond("""{"Status":200,"Message":"Device wurde aktualisiert!"}""")
+        }) { client ->
+            val secntfy = service(client)
+            val success = secntfy.updateKeys()
+            assertTrue(success)
+            assertTrue(updateCalled)
+        }
+    }
+
     private fun state() = SecNtfyState(
         apiUrl = "https://example.com/api/",
         apiKey = "app-secret",
         deviceToken = "device-secret",
-        device = NTFY_Devices(0, 0, 0, "SDK: 35", "test", "", "fcm-token", "public-key", "device-secret"),
+        bundleGroup = "de.sr.SecNtfy",
+        device = NTFY_Devices(
+            D_ID = 0,
+            D_APP_ID = 0,
+            D_OS = 0,
+            D_OS_Version = "SDK: 35",
+            D_Model = "test",
+            D_APN_ID = "",
+            D_Android_ID = "fcm-token",
+            D_PublicKey = "public-key",
+            D_NTFY_Token = "device-secret"
+        ),
     )
 
     private fun service(client: HttpClient, state: SecNtfyState = state()) = SecNtfy(SecNtfyApi(client), state)
